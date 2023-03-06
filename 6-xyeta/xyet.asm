@@ -22,8 +22,8 @@ New09   proc
         and al, not 80h
         out 61h, al
 
-        mov al, 20h                 ; end of interrupt
-        out 20h, al
+;        mov al, 20h                 ; end of interrupt
+;        out 20h, al
                 
         pop es bx ax
         

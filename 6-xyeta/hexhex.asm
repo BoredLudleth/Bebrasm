@@ -4,33 +4,31 @@ org 100h
 
 locals @@
 
-Start:	mov ax, 12cch
-	mov bx, 0b800h
-	mov es, bx
-        xor bx, bx
-        xor dx, dx
-        mov si, 0010h
-        mov ch, 4ch
-
-;        pop dx
-;        pop cx                          ; take 2 numbers
-;        push cx                         ; return copies to stack
-;        push dx
-;        add ax, cx                      ; the result of add in ax
-;        add ax, dx
-	xor bx, bx
-        xor cx, cx
-        add bx, 160 * 5 + 80            ; place in video memory
+Start:	
+        mov ax, 1dcch
+        push ax
+        call HexHex
 
 ;---------------------------------
-; Entry: DX 
+; Entry: AX
 ; Exit: 
 ; Expects: 
 ; Destroy: 
 ;---------------------------------
-
+jmp Ender
 HexHex		proc
+        push bp
+        mov bp, sp
 
+        mov ax, [bp + 4]
+
+        mov bx, 0b800h
+	    mov es, bx
+
+        mov bx, 160d * 5 + 120d
+
+        xor cx, cx
+        xor dx, dx
 
 @@Next:
         mov si, 0010h                   ;si = 16d
@@ -62,17 +60,20 @@ Wrrite:  pop ax
         add bx, 2
         loop Wrrite
 
-    	ret
+        pop bp
+    	
+        ret
 		endp
 ExxxWrite:                              ;print (0)
         mov word ptr es:[bx], 4c30h
         xor ax, ax
+
+        pop bp
+        
         ret
 		endp
 
-
-		call HexHex
         
-		mov ax, 4c00h
+Ender:		mov ax, 4c00h
 		int 21h			;exit
 end		Start
