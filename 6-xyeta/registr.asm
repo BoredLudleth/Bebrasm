@@ -1,5 +1,11 @@
 .286
 .model tiny
+.data
+Style: db 0bbh, 0cdh, 0c9h, 0bah, 0c8h, 0cdh, 0bch, 0bah
+       db 03h, 03h, 03h, 03h, 03h, 03h, 03h, 03h
+       db 0bfh, 0c4h, 0dah, 0b3h, 0c0h, 0c4h, 0d9h, 0b3h 
+       db '$'
+;rightUpAnkle -line_ leftUpAnkle |line| leftDownAnkle -line_ rightDownAnkle |line|
 .code
 org 100h
 
@@ -68,6 +74,26 @@ DrawRegs    proc
         push ax bx cx dx   ;ax
         push ax
         push 160d * 1 + 120d
+
+        mov bx, 0b800h                  ;print ax = 
+        mov es, bx
+        mov bx, 160d * 1 + 110d
+        mov ah, 4ch                     ;color
+        mov al, 'a'
+        mov es:[bx], ax
+        add bx, 2
+        mov al, 'x'
+        mov es:[bx], ax
+        add bx, 2
+        mov al, ' '
+        mov es:[bx], ax
+        add bx, 2
+        mov al, '='
+        mov es:[bx], ax
+        add bx, 2
+        mov al, ' '
+        mov es:[bx], ax
+
         call HexHex
         pop ax
         pop bx
@@ -76,6 +102,26 @@ DrawRegs    proc
         push ax bx cx dx  ;bx
         push bx
         push 160d * 2 + 120d
+
+        mov bx, 0b800h                  ;print bx = 
+        mov es, bx
+        mov bx, 160d * 2 + 110d
+        mov ah, 4ch
+        mov al, 'b'
+        mov es:[bx], ax
+        add bx, 2
+        mov al, 'x'
+        mov es:[bx], ax
+        add bx, 2
+        mov al, ' '
+        mov es:[bx], ax
+        add bx, 2
+        mov al, '='
+        mov es:[bx], ax
+        add bx, 2
+        mov al, ' '
+        mov es:[bx], ax
+
         call HexHex
         pop ax
         pop bx
@@ -84,6 +130,26 @@ DrawRegs    proc
         push ax bx cx dx  ;cx
         push cx
         push 160d * 3 + 120d
+
+        mov bx, 0b800h                  ;print cx = 
+        mov es, bx
+        mov bx, 160d * 3 + 110d
+        mov ah, 4ch
+        mov al, 'c'
+        mov es:[bx], ax
+        add bx, 2
+        mov al, 'x'
+        mov es:[bx], ax
+        add bx, 2
+        mov al, ' '
+        mov es:[bx], ax
+        add bx, 2
+        mov al, '='
+        mov es:[bx], ax
+        add bx, 2
+        mov al, ' '
+        mov es:[bx], ax
+
         call HexHex
         pop ax
         pop bx
@@ -92,6 +158,26 @@ DrawRegs    proc
         push ax bx cx dx ;dx
         push dx
         push 160d * 4 + 120d
+
+        mov bx, 0b800h                  ;print ax = 
+        mov es, bx
+        mov bx, 160d * 4 + 110d
+        mov ah, 4ch
+        mov al, 'd'
+        mov es:[bx], ax
+        add bx, 2
+        mov al, 'x'
+        mov es:[bx], ax
+        add bx, 2
+        mov al, ' '
+        mov es:[bx], ax
+        add bx, 2
+        mov al, '='
+        mov es:[bx], ax
+        add bx, 2
+        mov al, ' '
+        mov es:[bx], ax
+
         call HexHex
         pop ax
         pop bx
