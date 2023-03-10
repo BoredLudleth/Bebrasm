@@ -10,66 +10,35 @@ org 100h
 
 locals @@
 
-Start:
-
-ScrToStck:      mov bx, 00080h
-                xor cx, cx
-                mov byte ptr cl, [bx]
-                sub cx, 1           ; cx - number of symbols
-
-                mov bx, 00082h
-                xor dx, dx          ; symbol
-
-ReadSym:
-                mov byte ptr dl, [bx]
-                cmp dl, 20h         ; is space?
-                je Send
-                sub dx, 0030h       ; from char to int
-
-                mov ch, 10d
-                mul ch
-                add ax, dx          ; add 1 digit of dec num
-
-                mov ch, 00h          ; counter to default count
-                add bx, 1
-                loop ReadSym 
-
-                push ax
-                jmp DataProcess
-
-Send:           push ax
-                add bx, 1
-                xor ax, ax
-                loop ReadSym   
+Start: jmp EOP
 ;Information in stack is reflection of this
 ;X Y length height color_background style_frame 
-
-DataProcess:    pop ax
-                sub ax, 1
-                mov bl, 8
-                mul bl
-                mov si, offset Style
-                add si, ax          ;style
-
-                pop cx              ; color
-                
-                pop bx              ; heigth
-                mov dl, bl
-                pop bx
-                mov dh, bl          ; length
-
-                pop bx              ; Y
-                mov al, bl
-                pop bx              ; X
-                mov ah, bl           
-                
-                mov bx, 0b800h;
-                mov es, bx
-
-
 Frame   proc
         push bp
         mov bp, sp
+
+
+        mov ax, [bp + 4]
+        sub ax, 1
+        mov bl, 8
+        mul bl
+        mov si, offset Style
+        add si, ax          ;style
+
+        mov cx, [bp + 6]              ; color
+        
+        mov bx, [bp + 8]            ; heigth
+        mov dl, bl
+        mov bx, [bp + 10] 
+        mov dh, bl          ; length
+
+        mov bx, [bp + 12]              ; Y
+        mov al, bl
+        mov bx, [bp + 14]               ; X
+        mov ah, bl           
+        
+        mov bx, 0b800h;
+        mov es, bx
 
 
         mov ch, cl
@@ -164,7 +133,21 @@ RightLin:  mov es:[bx], ax
         ret
 		endp
 
+EOP:    ;X Y length height color_background style_frame 
+        push 10d        ;x - 1
+        push 1d        ;y - 1
+        push 3d         ;length + 1
+        push 3d         ;height +1
+        push 4ch        ;backcolor
+        push 2d        ;style
         call Frame
+        pop dx
+        pop dx
+        pop dx
+        pop dx
+        pop dx
+        pop dx
+
 
 		mov ax, 4c00h
 		int 21h

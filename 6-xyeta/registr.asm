@@ -18,9 +18,6 @@ New09   proc
         cmp al, 3bh
         jne Common09
 
-;        mov ax, cs
-;        mov ds, ax
-
         cmp MyFlag, 01h
         je Zero
 
@@ -58,7 +55,21 @@ New08   proc
 
         cmp MyFlag, 01h
         jne Common08
+
         call DrawRegs
+        pop bp sp di si es dx cx bx ax
+
+        push ax bx cx dx es si di sp bp 
+
+        push 64d        ;x
+        push 1d        ;y
+        push 10d         ;length
+        push 5d         ;height
+        push 5eh        ;backcolor
+        push 3d        ;style
+
+        call Frame
+        add sp, 12d
 
 Common08:        pop bp sp di si es dx cx bx ax
 
@@ -69,7 +80,132 @@ Common08:        pop bp sp di si es dx cx bx ax
         iret
         endp
 
+Frame   proc
+        push bp
+        mov bp, sp
+
+        mov ax, 5288h
+        mov ds, ax
+
+        xor ax, ax
+        mov ax, [bp + 4]
+        sub ax, 1
+        mov bl, 8
+        mul bl
+
+
+        mov si, offset Style
+        add si, ax          ;style
+        sub si, 8h
+
+        mov cx, [bp + 6]              ; color
         
+        mov bx, [bp + 8]            ; heigth
+        mov dl, bl
+        mov bx, [bp + 10] 
+        mov dh, bl          ; length
+
+        mov bx, [bp + 12]              ; Y
+        mov al, bl
+        mov bx, [bp + 14]               ; X
+        mov ah, bl           
+        
+        mov bx, 0b800h;
+        mov es, bx
+
+
+        mov ch, cl
+        mov cl, 00h
+        push cx                     ; color in stack
+        xor cx, cx
+
+
+        sub al, 1
+        mov cl, ah
+        mov ch, 160
+        mul ch
+        mov ch, 00h
+        add ax, cx
+        add ax, cx
+        mov bx, ax
+
+        mov cl, dh
+
+        pop ax
+        push ax
+        lodsb
+        mov word ptr es:[bx], ax
+        sub cl, 1
+        sub bx, 2
+
+
+        pop ax
+        push ax
+        lodsb
+
+UpLin:  mov word ptr es:[bx], ax
+        sub bx, 2
+        loop UpLin
+
+        mov cl, dl
+        
+        pop ax
+        push ax
+        lodsb
+
+        mov es:[bx], ax
+        sub cl, 1
+        add bx,160
+
+        pop ax
+        push ax
+        lodsb
+
+LeftLin:  mov es:[bx], ax
+        add bx, 160
+        loop LeftLin
+
+        mov cl, dh
+
+        pop ax
+        push ax
+        lodsb
+
+        mov es:[bx], ax
+        sub cl, 1
+        add bx, 2
+
+        pop ax
+        push ax
+        lodsb
+
+DownLin:  mov es:[bx], ax
+        add bx, 2
+        loop DownLin
+
+        mov cl, dl
+
+        pop ax
+        push ax
+        lodsb
+
+        mov es:[bx], ax
+        sub cl, 1
+        sub bx, 160
+
+        pop ax
+        push ax
+        lodsb
+
+RightLin:  mov es:[bx], ax
+        sub bx, 160
+        loop RightLin
+        pop ax
+
+        pop bp
+        ret
+        endp
+
 DrawRegs    proc
         push ax bx cx dx   ;ax
         push ax
@@ -250,7 +386,8 @@ ExxxWrite:                              ;print (0)
         ret
 	endp
 
-EOP:    MyFlag db 00h
+EOP:
+        MyFlag db 00h
         cli
         xor bx, bx
         mov es, bx
