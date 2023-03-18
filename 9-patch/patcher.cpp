@@ -22,20 +22,6 @@ int main()
 
     char current_frame[54] = {0};
 
-    sprintf(current_frame, "img/HACKERMAN.jpg\0");
-
-    if (!Frame.loadFromFile(current_frame)) 
-    {
-        return EXIT_FAILURE;
-    }
-
-    sprite.setTexture(Frame);
-    window.draw(sprite);
-
-    window.display();
-
-    sleep (10);
-
     music.play ();
 
     patch ();
@@ -49,9 +35,15 @@ int main()
 
         window.clear ();
 
-        for (int i = 100; i < 301; i++) 
+        for (int i = 1; i < 301; i++) 
         {
-            sprintf (current_frame, "img/Spongebob performs _We Are the Champions__%d.jpg", i);
+            if (i < 10) {
+                sprintf (current_frame, "img/Spongebob performs _We Are the Champions__00%d.jpg", i);
+            } else if (i < 100) {
+                sprintf (current_frame, "img/Spongebob performs _We Are the Champions__0%d.jpg", i);
+            } else {
+                sprintf (current_frame, "img/Spongebob performs _We Are the Champions__%d.jpg", i);
+            }
 
             if (!Frame.loadFromFile(current_frame)) 
             {
